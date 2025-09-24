@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import OpenAI from "openai";
 
 dotenv.config();
 
@@ -20,13 +21,11 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "Backend is running fine 🚀" });
 });
 
-import OpenAI from "openai";
-
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// ✅ Summary endpoint
+// ✅ Streaming summary endpoint
 app.post("/api/summary", express.json(), async (req, res) => {
   try {
     const { feedbacks } = req.body;
@@ -36,7 +35,7 @@ app.post("/api/summary", express.json(), async (req, res) => {
     }
 
     const prompt = `
-    You are an assistant helping summarize workplace feedback. All feedback is direacted at the Fontys ICT - InnovationLab in strijp S
+    You are an assistant helping summarize workplace feedback. All feedback is directed at the Fontys ICT - InnovationLab in Strijp S.
 
     Task:
     - Only look at the feedback given, do not make anything up. If there is no positive feedback, say that, the same goes for negative.
@@ -48,22 +47,37 @@ app.post("/api/summary", express.json(), async (req, res) => {
       3. Any suggestions or recurring themes from employees
     - Do NOT include a top-level title like "Feedback Summary" (the UI already has one).
     - Keep it concise, but well formatted with line breaks for readability.
-    -suggest what should be inproved in a short way
+    - Suggest what should be improved in a short way.
 
     Feedbacks:
     ${feedbacks.map((f, i) => `${i + 1}. ${f}`).join("\n")}
     `;
 
-    const completion = await openai.chat.completions.create({
+    // ✅ Streaming headers
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.flushHeaders?.();
+
+    // ✅ OpenAI stream
+    const stream = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
+      stream: true,
     });
 
-    const summary = completion.choices[0].message.content;
-    res.json({ summary });
+    for await (const chunk of stream) {
+      const delta = chunk.choices[0]?.delta?.content || "";
+      if (delta) {
+        res.write(delta);
+      }
+    }
+
+    res.end();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to generate summary" });
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Failed to generate summary" });
+    }
   }
 });
 

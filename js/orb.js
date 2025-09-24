@@ -33,7 +33,7 @@ function applyHue(hue) {
 }
 
 // ===========================
-// Calm dots (fade in/out around orb)
+// Calm dots
 // ===========================
 function spawnCalmDot() {
   const dot = document.createElement("div");
@@ -43,9 +43,8 @@ function spawnCalmDot() {
   dot.style.width = `${size}px`;
   dot.style.height = `${size}px`;
 
-  // Place around orb edge
   const angle = Math.random() * Math.PI * 2;
-  const distance = 110 + Math.random() * 25; // a bit outside orb
+  const distance = 110 + Math.random() * 25;
   const x = 160 + distance * Math.cos(angle);
   const y = 160 + distance * Math.sin(angle);
   dot.style.left = `${x}px`;
@@ -53,7 +52,6 @@ function spawnCalmDot() {
 
   particlesContainer.appendChild(dot);
 
-  // Force paint before fade-in (prevents instant pop-in)
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       dot.style.opacity = 1;
@@ -63,14 +61,12 @@ function spawnCalmDot() {
     });
   });
 
-  // Fade out after lifespan
   setTimeout(() => {
     dot.style.opacity = 0;
     setTimeout(() => dot.remove(), 1500);
   }, 5000);
 }
 
-// Spawn calm dots continuously
 setInterval(spawnCalmDot, 1200);
 
 // ===========================
@@ -128,25 +124,37 @@ onSnapshot(collection(db, "feedbacks"), (snapshot) => {
 });
 
 // ===========================
-// Modal logic
+// Modal + Streaming summary
 // ===========================
 summaryBtn.onclick = async () => {
   modal.style.display = "block";
-  summaryText.textContent = "Loading...";
+  summaryText.textContent = ""; // clear before streaming
+
   try {
     const res = await fetch("/api/summary", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ feedbacks: collectedFeedbacks }),
     });
-    const data = await res.json();
-    summaryText.innerHTML = marked.parse(data.summary || "No summary available.");
-  } catch {
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      summaryText.innerHTML = marked.parse(buffer);
+    }
+  } catch (err) {
+    console.error(err);
     summaryText.textContent = "Error loading summary.";
   }
 };
 
-closeBtn.onclick = () => modal.style.display = "none";
+closeBtn.onclick = () => (modal.style.display = "none");
 window.onclick = (e) => {
   if (e.target === modal) modal.style.display = "none";
 };
