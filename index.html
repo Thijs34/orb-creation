@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Machine</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+ <div class="feedback-card">
+  <h2>How’s your experience today?</h2>
+  <div class="rating-container">
+    <button class="rating-emoji">😠</button>
+    <button class="rating-emoji">😕</button>
+    <button class="rating-emoji">😐</button>
+    <button class="rating-emoji">😊</button>
+    <button class="rating-emoji">😍</button>
+  </div>
+  <textarea placeholder="Share your thoughts..." id="feedbackText"></textarea>
+  <button class="submit-btn" id="submitFeedback">Submit Feedback</button>
+</div>
+
+  <div class="popup-overlay" id="popup">
+    <div class="popup-content">
+     <div class="checkmark">
+  <i class='bx bx-check'></i>
+</div>
+      <h3>Thank you! 🎉</h3>
+      <p>Your feedback helps us improve!</p>
+      <button class="submit-btn" id="closePopupBtn" style="margin-top: 1rem;">Close</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="js/firebase-config.js"></script>
+  <!-- Custom JS -->
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>

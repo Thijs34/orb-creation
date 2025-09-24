@@ -1,0 +1,5 @@
+# Ignore environment file
+feedback-backend/.env
+
+# Ignore node_modules directory
+feedback-backend/node_modules/

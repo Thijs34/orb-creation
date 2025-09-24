@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Feedback Orb</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="../styles/styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="page-header">
+      <h1>Workplace Mood Orb</h1>
+      <p>Live pulse of team feedback visualized</p>
+    </header>
+
+    <!-- Orb scene -->
+    <div class="scene" id="scene">
+      <div class="orb" id="orb">
+        <div class="orb-halo"></div>
+        <div class="orb-core"></div>
+        <div class="orb-overlay"></div>
+      </div>
+
+      <div class="ring" aria-hidden="true"></div>
+     <div class="particles" id="particles" aria-hidden="true"></div>
+      <div class="floating-words" id="floatingWords"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <button id="summaryBtn" class="summary-btn">View Summary</button>
+    </footer>
+  </div>
+
+  <!-- Summary Modal -->
+  <div id="summaryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Feedback Summary</h2>
+        <span class="close">&times;</span>
+      </div>
+      <div id="summaryText"></div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script type="module" src="../js/orb.js"></script>
+</body>
+</html>
