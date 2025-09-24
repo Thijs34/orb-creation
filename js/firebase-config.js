@@ -3,13 +3,7 @@ import { getFirestore, collection, addDoc } from "https://www.gstatic.com/fireba
 
 // ✅ Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyBjZqcA44ImaNklnBjAjToz08aQ5dff2tM",
-  authDomain: "feedback-machine-9298c.firebaseapp.com",
-  projectId: "feedback-machine-9298c",
-  storageBucket: "feedback-machine-9298c.firebasestorage.app",
-  messagingSenderId: "1062557554010",
-  appId: "1:1062557554010:web:fdd54cbe001c103947cf63",
-  measurementId: "G-XH9REBTMXE"
+  
 };
 
 // Initialize Firebase
