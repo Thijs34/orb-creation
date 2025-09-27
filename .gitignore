@@ -3,3 +3,5 @@ feedback-backend/.env
 
 # Ignore node_modules directory
 feedback-backend/node_modules/
+
+node_modules/
